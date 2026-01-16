@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS filmer (
 CREATE TABLE IF NOT EXISTS recensioner (
     film_id INT,
     medlem_id INT,
-    betyg INT CHECK ( betyg >= 1 AND betyg <= 5 ) NOT NULL ,
+    betyg TINYINT CHECK ( betyg >= 1 AND betyg <= 5 ) NOT NULL ,
     kommentar VARCHAR( 280 ),
     PRIMARY KEY ( film_id, medlem_id ), -- varje medlem kan bara skriva en recension för varje film
     FOREIGN KEY ( film_id )   REFERENCES filmer( film_id ),
