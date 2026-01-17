@@ -1,10 +1,5 @@
 
 -- create
-
-DROP TABLE IF EXISTS utlaning;
-DROP TABLE IF EXISTS recensioner;
-DROP TABLE IF EXISTS filmer;
-DROP TABLE IF EXISTS medlemmar;
 DROP DATABASE IF EXISTS wigell_movie_club;
 
 CREATE DATABASE IF NOT EXISTS wigell_movie_club;
@@ -45,10 +40,6 @@ CREATE TABLE  IF NOT EXISTS utlaning (
     aterlamningsdatum DATE,
     CHECK ( utlaningsdatum <= aterlamningsdatum )
 );
-
-# DESCRIBE utlaning;
-# DESCRIBE filmer;
-#
 
 -- insert
 
@@ -110,7 +101,7 @@ INSERT INTO utlaning ( film_id, medlem_id, utlaningsdatum, aterlamningsdatum ) V
     ( SELECT film_id FROM filmer WHERE film_titel = 'Avatar' ),
     ( SELECT medlem_id FROM medlemmar WHERE medlem_namn = 'Herner Werzog' ),
     '2025-07-19',
-    '2025-07-19'
+    NULL
 );
 
 -- 6. Soe Zaldaña hyr Titanic
@@ -259,7 +250,8 @@ JOIN filmer ON utlaning.film_id = filmer.film_id
 JOIN medlemmar ON utlaning.medlem_id = medlemmar.medlem_id
 WHERE aterlamningsdatum IS NULL;
 
-SELECT filmer.film_titel, COUNT( medlem_id ) AS antal_recensioner, AVG( betyg ) AS snitt_betyg
+# lägg till info om fråga 3
+SELECT filmer.film_titel, COUNT( medlem_id ) AS antal_recensioner, AVG( betyg ) AS snittbetyg
 FROM recensioner
 JOIN filmer ON recensioner.film_id = filmer.film_id
 GROUP BY filmer.film_titel;
