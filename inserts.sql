@@ -1,77 +1,32 @@
-
--- create
-DROP DATABASE IF EXISTS wigell_movie_club;
-
-CREATE DATABASE IF NOT EXISTS wigell_movie_club;
-
-USE wigell_movie_club;
-
-CREATE TABLE IF NOT EXISTS medlemmar (
-    medlem_id INT PRIMARY KEY AUTO_INCREMENT,
-    medlem_namn VARCHAR( 64 ) NOT NULL UNIQUE,
-    medlem_epost VARCHAR( 64 ) NOT NULL UNIQUE,
-    medlemsdatum DATE
-);
-
-CREATE TABLE IF NOT EXISTS filmer (
-    film_id INT PRIMARY KEY AUTO_INCREMENT,
-    film_titel VARCHAR( 64 ) NOT NULL UNIQUE,
-    film_genre VARCHAR( 64 ),
-    film_slappar INT
-);
-
-CREATE TABLE IF NOT EXISTS recensioner (
-    film_id INT,
-    medlem_id INT,
-    betyg TINYINT CHECK ( betyg >= 1 AND betyg <= 5 ) NOT NULL ,
-    kommentar VARCHAR( 280 ),
-    PRIMARY KEY ( film_id, medlem_id ), -- varje medlem kan bara skriva en recension för varje film
-    FOREIGN KEY ( film_id )   REFERENCES filmer( film_id ),
-    FOREIGN KEY ( medlem_id ) REFERENCES medlemmar( medlem_id )
-);
-
-CREATE TABLE  IF NOT EXISTS utlaning (
-    utlaning_id INT PRIMARY KEY AUTO_INCREMENT,
-    film_id INT,
-    medlem_id INT,
-    FOREIGN KEY ( film_id ) REFERENCES filmer( film_id ),
-    FOREIGN KEY ( medlem_id) REFERENCES  medlemmar( medlem_id ),
-    utlaningsdatum DATE NOT NULL,
-    aterlamningsdatum DATE,
-    CHECK ( utlaningsdatum <= aterlamningsdatum )
-);
-
--- insert
-
 INSERT INTO medlemmar ( medlem_namn, medlem_epost, medlemsdatum ) VALUES
-( 'Simon Toivola', 'simon.toivola@mail.com', '2025-09-01' ),
-( 'Sleven Spielberg', 'sleven.spielberg@hollywood.biz', '1998-07-24' ),
-( 'Herner Werzog', 'herner.werzog@hollywood.biz', '1972-12-29' ),
-( 'Soe Zaldaña', 'soe.zaldana@hollywood.biz', '2009-12-18'),
-( 'Billie Mobby Grey', 'billie.mobby.grey@hollywood.biz', '2016-07-15'),
-( 'Hom Tardy', 'hom.tardy@hollywood.biz', '2012-07-20'),
-( 'Kristoffer Nålan', 'kristoffer.nalan@hollywood.biz', '2020-09-3'),
-( 'David Lynch-Mob', 'david.lynch-mob@hollywood.biz', '2001-10-19' ),
-( 'Sara N', 'no-reply@ihaveaboyfriend.com', '2026-01-18');
+    ( 'Simon Toivola', 'simon.toivola@mail.com', '2025-09-01' ),
+    ( 'Sleven Spielberg', 'sleven.spielberg@hollywood.biz', '1998-07-24' ),
+    ( 'Herner Werzog', 'herner.werzog@hollywood.biz', '1972-12-29' ),
+    ( 'Soe Zaldaña', 'soe.zaldana@hollywood.biz', '2009-12-18'),
+    ( 'Billie Mobby Grey', 'billie.mobby.grey@hollywood.biz', '2016-07-15'),
+    ( 'Hom Tardy', 'hom.tardy@hollywood.biz', '2012-07-20'),
+    ( 'Kristoffer Nålan', 'kristoffer.nalan@hollywood.biz', '2020-09-3'),
+    ( 'David Lynch-Mob', 'david.lynch-mob@hollywood.biz', '2001-10-19' ),
+    ( 'Sara N', 'no-reply@ihaveaboyfriend.com', '2026-01-18');
 
 
 INSERT INTO filmer( film_titel, film_genre, film_slappar ) VALUES
-( 'Saving Private Ryan', 'Krig', 1998 ),
-( 'Aguirre, the Wrath of God', 'Äventyr', 1972 ),
-( 'Avatar', 'Science Fiction', 2009 ),
-( 'The Dark Knight Rises', 'Action', 2012 ),
-( 'Tenet', 'Science Fiction', 2020 ),
-( 'Titanic', 'Drama', 1997 ),
-( 'Eyes Without a Face', 'Skräck', 1960 ),
-( 'The Wizard of Oz', 'Musikal', 1939 );
+    ( 'Saving Private Ryan', 'Krig', 1998 ),
+    ( 'Aguirre, the Wrath of God', 'Äventyr', 1972 ),
+    ( 'Avatar', 'Science Fiction', 2009 ),
+    ( 'The Dark Knight Rises', 'Action', 2012 ),
+    ( 'Tenet', 'Science Fiction', 2020 ),
+    ( 'Titanic', 'Drama', 1997 ),
+    ( 'Eyes Without a Face', 'Skräck', 1960 ),
+    ( 'The Wizard of Oz', 'Musikal', 1939 );
 
 
 -- 1. Simon Toivola hyr Saving Private Ryan
 INSERT INTO utlaning ( film_id, medlem_id, utlaningsdatum, aterlamningsdatum ) VALUES (
-        ( SELECT film_id FROM filmer WHERE film_titel = 'Saving Private Ryan' ),
-        ( SELECT medlem_id FROM medlemmar WHERE medlem_namn = 'Simon Toivola' ),
-        '2015-07-14',
-        '2015-07-14'
+    ( SELECT film_id FROM filmer WHERE film_titel = 'Saving Private Ryan' ),
+    ( SELECT medlem_id FROM medlemmar WHERE medlem_namn = 'Simon Toivola' ),
+    '2015-07-14',
+    '2015-07-14'
 );
 
 -- 2. Simon Toivola hyr Tenet
@@ -88,7 +43,7 @@ INSERT INTO utlaning ( film_id, medlem_id, utlaningsdatum, aterlamningsdatum ) V
     ( SELECT medlem_id FROM medlemmar WHERE medlem_namn = 'Kristoffer Nålan' ),
     '2025-07-16',
     NULL
-);
+    );
 
 -- 4. Sleven Spielberg hyr Tenet
 INSERT INTO utlaning ( film_id, medlem_id, utlaningsdatum, aterlamningsdatum ) VALUES (
@@ -234,78 +189,3 @@ INSERT INTO recensioner ( medlem_id, film_id, betyg, kommentar ) VALUES (
     4,
     'Tekniskt mästerverk. Jag önskar att jag hade haft dessa verktyg för hajen i Jaws.'
 );
-
-
-
--- queries
-
--- Fråga 1 – Lista alla utlåningar
--- Visa:
---  filmens titel
---  medlemmens namn
---  utlåningsdatum
---  återlämningsdatum
--- Sortera så att de senaste utlåningarna visas först.
-SELECT film_titel AS 'filmtitel',
-       medlem_namn AS 'namn',
-       utlaningsdatum AS 'utlåningsdatum',
-       aterlamningsdatum AS 'återlämningsdatum'
-FROM utlaning
-JOIN filmer ON utlaning.film_id = filmer.film_id
-JOIN medlemmar ON utlaning.medlem_id = medlemmar.medlem_id
-ORDER BY utlaningsdatum DESC;
-
--- Fråga 2 – Filmer som inte är återlämnade
--- Visa:
---  filmens titel
---  vem som har lånat filmen
---  utlåningsdatum
--- Endast filmer som ännu inte är återlämnade ska visas.
-SELECT filmer.film_titel AS 'titel',
-       medlemmar.medlem_namn AS 'namn',
-       utlaningsdatum AS 'utlåningsdatum'
-FROM utlaning
-JOIN filmer ON utlaning.film_id = filmer.film_id
-JOIN medlemmar ON utlaning.medlem_id = medlemmar.medlem_id
-WHERE aterlamningsdatum IS NULL;
-
--- Fråga 3 – Snittbetyg per film
--- Visa:
---  filmens titel
---  antal recensioner
---  snittbetyg
--- Endast filmer som har minst en recension ska visas.
--- Sortera efter högst snittbetyg först.
-SELECT filmer.film_titel AS 'titel',
-       COUNT( medlem_id ) AS 'antal recensioner',
-       AVG( betyg ) AS 'snittbetyg'
-FROM recensioner
-JOIN filmer ON recensioner.film_id = filmer.film_id
-GROUP BY filmer.film_titel
-ORDER BY snittbetyg DESC;
-
--- Fråga 4 – Mest aktiva medlem
--- Visa:
---  namn på medlem
---  antal utlåningar
-SELECT medlemmar.medlem_namn AS 'namn',
-COUNT(utlaning.medlem_id) AS 'antal hyrningar'  FROM utlaning
-JOIN medlemmar ON utlaning.medlem_id = medlemmar.medlem_id
-GROUP BY utlaning.medlem_id
-HAVING `antal hyrningar` >= ALL (
-    SELECT COUNT(utlaning.medlem_id)
-    FROM utlaning
-    GROUP BY medlem_id
-);
-
--- Fråga 5 – GROUP BY + HAVING
--- Visa:
---  genre
---  antal filmer
--- Endast genrer som har minst två filmer ska visas.
-SELECT  film_genre AS 'genre',
-        COUNT( film_id ) AS 'filmer i genren'
-FROM filmer
-GROUP BY film_genre
-HAVING `filmer i genren` >= 2;
-
